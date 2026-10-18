@@ -21,7 +21,7 @@ A fast, macOS-style Spotlight search for Windows 11 and 10. Press **Win+Space**,
 
 ## Download and install
 
-1. Download **`Spotlight-win-x64.exe`** from the [latest release](https://github.com/leoapplecool/spotlight-for-windows/releases/latest).
+1. **[Download Spotlight-win-x64.exe](https://github.com/LeoAppleCool/spotlight-for-windows/releases/latest/download/Spotlight-win-x64.exe)** (all versions: [Releases](https://github.com/LeoAppleCool/spotlight-for-windows/releases)).
 2. Run it. The app isn't code-signed, so Windows SmartScreen may warn: click **More info → Run anyway**.
 3. Spotlight installs itself for your user account (`%LOCALAPPDATA%\Programs\Spotlight`), adds a Start menu entry and starts with Windows from now on. Press **Win+Space**.
 
