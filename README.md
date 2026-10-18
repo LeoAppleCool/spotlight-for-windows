@@ -63,6 +63,10 @@ powershell -ExecutionPolicy Bypass -File scripts\install.ps1   # build and insta
 
 `Spotlight.exe --query "text" --out results.txt` writes the ranked results of a query without showing any UI.
 
+## License
+
+[MIT](LICENSE)
+
 ---
 
 Spotlight is a trademark of Apple Inc. This project is not affiliated with or endorsed by Apple.
