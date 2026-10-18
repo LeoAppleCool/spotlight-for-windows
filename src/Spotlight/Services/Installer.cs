@@ -36,7 +36,8 @@ internal static class Installer
         || CurrentExe.Contains(@"\bin\Release\", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>Installs this exe if it runs from elsewhere. True: the installed copy was started, exit now.</summary>
-    public static bool InstallIfNeeded(Action quitRunningInstance)
+    /// <param name="args">Passed on to the installed copy (e.g. --background).</param>
+    public static bool InstallIfNeeded(Action quitRunningInstance, string[] args)
     {
         if (IsInstalledCopy || IsDevelopmentBuild || CurrentExe.Length == 0) return false;
         try
@@ -51,7 +52,9 @@ internal static class Installer
                 DeleteFile(InstalledExe + ":Zone.Identifier");
             }
             EnsureRegistered();
-            Process.Start(new ProcessStartInfo(InstalledExe) { UseShellExecute = false, WorkingDirectory = InstallDir });
+            var start = new ProcessStartInfo(InstalledExe) { UseShellExecute = false, WorkingDirectory = InstallDir };
+            foreach (var arg in args) start.ArgumentList.Add(arg);
+            Process.Start(start);
             return true;
         }
         catch (Exception ex)

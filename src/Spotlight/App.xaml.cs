@@ -54,7 +54,7 @@ public partial class App : Application
             return;
         }
         // Started from a download: copy into the programs folder and continue from there.
-        if (!quit && Installer.InstallIfNeeded(QuitRunningInstance))
+        if (!quit && Installer.InstallIfNeeded(QuitRunningInstance, e.Args))
         {
             Shutdown();
             return;
