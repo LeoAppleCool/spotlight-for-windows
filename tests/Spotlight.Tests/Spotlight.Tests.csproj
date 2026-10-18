@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Plain console test runner without test framework packages. Run it with: dotnet run (project tests/Spotlight.Tests) -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- The UI-independent parts of the app are compiled in directly. -->
+  <ItemGroup>
+    <Compile Include="..\..\src\Spotlight\Calc\**\*.cs" LinkBase="Calc" />
+    <Compile Include="..\..\src\Spotlight\Core\Matcher.cs" Link="Core\Matcher.cs" />
+    <Compile Include="..\..\src\Spotlight\Core\Loc.cs" Link="Core\Loc.cs" />
+    <Compile Include="..\..\src\Spotlight\Core\Strings\*.cs" LinkBase="Core\Strings" />
+  </ItemGroup>
+
+</Project>

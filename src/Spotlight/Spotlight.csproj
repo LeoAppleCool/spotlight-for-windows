@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>Spotlight</RootNamespace>
+    <AssemblyName>Spotlight</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\Spotlight.ico</ApplicationIcon>
+    <Product>Spotlight</Product>
+    <Version>1.0.0</Version>
+    <!-- Keep running if only a newer .NET desktop runtime is installed later. -->
+    <RollForward>LatestMajor</RollForward>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <TieredPGO>true</TieredPGO>
+    <!-- Small heap that is idle most of the time: no background GC thread needed. -->
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <!-- WinForms is only used for the tray icon; DPI awareness comes from app.manifest (PerMonitorV2). -->
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF and WinForms both define Application, MessageBox, KeyEventArgs, ... -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+    <!-- WPF leaves System.IO out of the implicit usings (Path clashes with Shapes.Path, which we don't use). -->
+    <Using Include="System.IO" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Spotlight.ico" />
+  </ItemGroup>
+
+</Project>

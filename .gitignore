@@ -1,0 +1,10 @@
+bin/
+obj/
+dist/
+.vs/
+*.user
+
+# local tooling data
+.swarm/
+.claude-flow/
+.claude/

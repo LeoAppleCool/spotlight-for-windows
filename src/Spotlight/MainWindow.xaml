@@ -1,0 +1,196 @@
+<Window x:Class="Spotlight.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:core="clr-namespace:Spotlight.Core"
+        Title="Spotlight"
+        Width="760"
+        SizeToContent="Height"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        ShowActivated="True"
+        Topmost="True"
+        Background="Transparent"
+        UseLayoutRounding="True"
+        FontFamily="Segoe UI Variable Text, Segoe UI">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+        <Style x:Key="SearchBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="False"
+                                      HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SlimThumb" TargetType="Thumb">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border CornerRadius="3" Background="{DynamicResource Brush.ScrollThumb}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ScrollBar">
+            <Setter Property="Width" Value="6" />
+            <Setter Property="MinWidth" Value="6" />
+            <Setter Property="Margin" Value="0,4,1,4" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource SlimThumb}" />
+                            </Track.Thumb>
+                        </Track>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ResultItem" TargetType="ListBoxItem">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="8">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsSelected" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Hover}" />
+                            </MultiTrigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Selection}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsHeader}" Value="True">
+                    <Setter Property="IsEnabled" Value="False" />
+                    <Setter Property="IsHitTestVisible" Value="False" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <DataTemplate DataType="{x:Type core:HeaderEntry}">
+            <TextBlock Text="{Binding Title}" FontSize="12" FontWeight="SemiBold"
+                       Foreground="{DynamicResource Brush.Header}" Margin="10,9,0,3" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type core:SearchResult}">
+            <Grid MinHeight="44" Margin="8,0,10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="32" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Width="32" Height="32" VerticalAlignment="Center">
+                    <Border x:Name="GlyphTile" CornerRadius="7" Background="{DynamicResource Brush.IconTile}"
+                            Visibility="{Binding HasGlyph, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock x:Name="GlyphText" Text="{Binding Glyph}" FontFamily="{Binding GlyphFont}" FontSize="16"
+                                   Foreground="{DynamicResource Brush.Text}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <Image Source="{Binding Image}" Width="32" Height="32" RenderOptions.BitmapScalingMode="HighQuality" />
+                </Grid>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,4,10,4">
+                    <TextBlock x:Name="TitleText" Text="{Binding Title}" FontSize="14"
+                               Foreground="{DynamicResource Brush.Text}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="SubText" Text="{Binding Subtitle}" FontSize="12" Margin="0,1,0,0"
+                               Foreground="{DynamicResource Brush.SubText}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <StackPanel x:Name="HintPanel" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                            Visibility="Collapsed">
+                    <TextBlock Text="{Binding Hint}" FontSize="12" VerticalAlignment="Center"
+                               Foreground="{DynamicResource Brush.SelectionSubText}" />
+                    <Border Margin="7,0,0,0" Padding="6,1,6,2" CornerRadius="5" Background="{DynamicResource Brush.KeyCap}">
+                        <TextBlock Text="↵" FontSize="11" Foreground="{DynamicResource Brush.SelectionText}" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                    <Setter TargetName="TitleText" Property="Foreground" Value="{DynamicResource Brush.SelectionText}" />
+                    <Setter TargetName="SubText" Property="Foreground" Value="{DynamicResource Brush.SelectionSubText}" />
+                    <Setter TargetName="GlyphText" Property="Foreground" Value="{DynamicResource Brush.SelectionText}" />
+                    <Setter TargetName="GlyphTile" Property="Background" Value="{DynamicResource Brush.KeyCap}" />
+                    <Setter TargetName="HintPanel" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Subtitle}" Value="{x:Null}">
+                    <Setter TargetName="SubText" Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsCalculation}" Value="True">
+                    <Setter TargetName="TitleText" Property="FontSize" Value="19" />
+                    <Setter TargetName="TitleText" Property="FontWeight" Value="SemiBold" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Border x:Name="Root" Background="{DynamicResource Brush.Tint}" CornerRadius="8" BorderThickness="1"
+            BorderBrush="{DynamicResource Brush.Edge}">
+        <Grid>
+            <!-- faint sheen across the top, like light falling on glass -->
+            <Border Height="64" VerticalAlignment="Top" CornerRadius="7,7,0,0" Background="{DynamicResource Brush.Sheen}"
+                    IsHitTestVisible="False" />
+        <StackPanel>
+            <Grid Height="58" Margin="18,0,16,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="&#xE721;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="19"
+                           Foreground="{DynamicResource Brush.SubText}" VerticalAlignment="Center" Margin="0,2,13,0" />
+                <Grid Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock x:Name="Placeholder" FontSize="21" FontFamily="Segoe UI Variable Display, Segoe UI"
+                               Foreground="{DynamicResource Brush.Placeholder}" IsHitTestVisible="False" Margin="2,0,0,0" />
+                    <TextBox x:Name="SearchBox" Style="{StaticResource SearchBoxStyle}" FontSize="21"
+                             FontFamily="Segoe UI Variable Display, Segoe UI"
+                             Foreground="{DynamicResource Brush.Text}" CaretBrush="{DynamicResource Brush.Caret}"
+                             SelectionBrush="{DynamicResource Brush.TextSelection}" SelectionOpacity="1" />
+                </Grid>
+            </Grid>
+
+            <Border x:Name="Divider" Height="1" Background="{DynamicResource Brush.Separator}" Visibility="Collapsed" />
+
+            <ListBox x:Name="ResultsList" Visibility="Collapsed" MaxHeight="476" Padding="6,2,6,6"
+                     Background="Transparent" BorderThickness="0" Focusable="False" SelectionMode="Single"
+                     ItemContainerStyle="{StaticResource ResultItem}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False"
+                     VirtualizingPanel.IsVirtualizing="False" KeyboardNavigation.TabNavigation="None">
+                <ListBox.Template>
+                    <ControlTemplate TargetType="ListBox">
+                        <ScrollViewer Padding="{TemplateBinding Padding}" Focusable="False">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ListBox.Template>
+            </ListBox>
+        </StackPanel>
+        </Grid>
+    </Border>
+</Window>
